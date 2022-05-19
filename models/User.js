@@ -35,14 +35,14 @@ const userSchema = mongoose.Schema({              //스키마는 mongoDB와 연�
     },
 })
 
-userSchema.pre('save', function (next) {                 //mongoose의 method로 저장하기 전에 함수를 실행함
+userSchema.pre('save', function (next) {                 //mongoose의 method로, 저장하기 전에 함수를 실행함
     var user = this //this는 userSchema를 의미하고 mongoDB와 연동되어있음
 
     if (user.isModified('password')) { //isModified는 mongoose 모듈 함수로서 입력값에 해당하는 스키마의 데이터가 변경된 경우는 true를 반환
         bcrypt.genSalt(saltRounds, function (err, salt) {          //앞서 정해놓은 자리수만큼 salt를 만들고 함수를 실행
             if (err) return next(err);
             bcrypt.hash(user.password, salt, function (err, hash) {     //만들어진 salt를 이용하여 입력받은 값(DB안의 password)의 hash를 만들고 비밀번호를 암호화된 hash로 바꿔줌
-                if (err) return next(err);
+                if (err) return next(err);          
                 user.password = hash
                 next()
             })
@@ -60,7 +60,7 @@ userSchema.methods.comparePassword = function (password, cb) {           //함�
     })
 }
 
-userSchema.methods.genToken = function (cb) { //함수 이름은 임의로 만들어도 됨. 비밀번호를 입력받고 콜백함수를 실행
+userSchema.methods.genToken = function(cb) { //함수 이름은 임의로 만들어도 됨. 비밀번호를 입력받고 콜백함수를 실행
     var user = this //this는 스키마를 의미함.
     var token = jwt.sign(user._id.toHexString(), "Myname") //모듈의 함수를 통해 입력받은 값(스키마 안의 id)과, 임의의 값(Jongjin)을 이용하여 token을 생성  
 
